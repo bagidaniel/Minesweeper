@@ -1,15 +1,15 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
-public class Cell implements ActionListener {
+public class Cell extends MouseAdapter {
     private final JButton button;
     public static JButton pressedButton;
     private final Board board;
     private int value;
     private int id;
     private boolean notChecked;
+    private boolean flagged;
 
     public Cell(Board board){
         button = new JButton();
@@ -17,11 +17,13 @@ public class Cell implements ActionListener {
         button.setFont(new Font("Verdana", Font.BOLD, 35));
         button.setBackground(Color.DARK_GRAY);
         button.setBorder(BorderFactory.createBevelBorder(0));
-        button.addActionListener(this);
         button.setPreferredSize(new Dimension(50,50));
+        button.addMouseListener(this);
         this.board = board;
         notChecked = true;
+        flagged = false;
     }
+
     public JButton getButton() {
         return button;
     }
@@ -57,7 +59,8 @@ public class Cell implements ActionListener {
     }
     public void displayMine(){
         if(value==-1) {
-            button.setText("X");
+            button.setFont(new Font("Arial Unicode MS", Font.BOLD, 35));
+            button.setText("\u269B");
             button.setBackground(Color.RED);
         }
     }
@@ -90,16 +93,42 @@ public class Cell implements ActionListener {
         button.setEnabled(false);
     }
 
+    public void flag(){
+        button.setBackground(Color.MAGENTA);
+        button.setFont(new Font("Arial Unicode MS", Font.BOLD, 35));
+        button.setText("\u2691");
+        flagged = true;
+    }
+
     public void reset(){
         button.setEnabled(true);
         button.setText("");
         button.setBackground(Color.DARK_GRAY);
+        button.setFont(new Font("Verdana", Font.BOLD, 35));
         value = 0;
         notChecked = true;
+        flagged = false;
     }
+
     @Override
-    public void actionPerformed(ActionEvent e) {
-        pressedButton = (JButton) e.getSource();
-        checkCell();
+    public void mouseClicked(MouseEvent e) {
+        if(e.getButton() == MouseEvent.BUTTON3){
+            if (flagged){
+                button.setEnabled(true);
+                button.setText("");
+                button.setBackground(Color.DARK_GRAY);
+                button.setFont(new Font("Verdana", Font.BOLD, 35));
+                flagged = false;
+            }
+            else{
+                flag();
+            }
+        }
+        else{
+            pressedButton = (JButton) e.getSource();
+            if (!flagged){
+                checkCell();
+            }
+        }
     }
 }
