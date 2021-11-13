@@ -44,7 +44,16 @@ public class Cell extends MouseAdapter {
         this.value = value;
     }
 
+    public void incrementValue(){
+        value++;
+    }
+
+    public boolean isNotChecked(){
+        return notChecked;
+    }
+
     public void displayValue(){
+        button.setBackground(Color.WHITE);
         if(value > 0){
             button.setText("" + value);
             switch (value) {
@@ -66,7 +75,6 @@ public class Cell extends MouseAdapter {
     }
     public void checkCell(){
         //button.setEnabled(false);
-        button.setBackground(Color.WHITE);
         displayValue();
         notChecked = false;
         board.isWin();
@@ -78,14 +86,10 @@ public class Cell extends MouseAdapter {
         if(value == -1) {
             board.isLose();
         }
-    }
-
-    public void incrementValue(){
-        value++;
-    }
-
-    public boolean isNotChecked(){
-        return notChecked;
+        if(flagged){
+            deleteFlag();
+            displayValue();
+        }
     }
 
     public void reveal(){
@@ -95,9 +99,20 @@ public class Cell extends MouseAdapter {
 
     public void flag(){
         button.setBackground(Color.MAGENTA);
+        button.setForeground(Color.LIGHT_GRAY);
         button.setFont(new Font("Arial Unicode MS", Font.BOLD, 35));
         button.setText("\u2691");
         flagged = true;
+        board.mineCountMinus();
+    }
+
+    public void deleteFlag(){
+        button.setEnabled(true);
+        button.setText("");
+        button.setBackground(Color.DARK_GRAY);
+        button.setFont(new Font("Verdana", Font.BOLD, 35));
+        board.mineCountAdd();
+        flagged = false;
     }
 
     public void reset(){
@@ -114,11 +129,7 @@ public class Cell extends MouseAdapter {
     public void mouseClicked(MouseEvent e) {
         if(e.getButton() == MouseEvent.BUTTON3){
             if (flagged){
-                button.setEnabled(true);
-                button.setText("");
-                button.setBackground(Color.DARK_GRAY);
-                button.setFont(new Font("Verdana", Font.BOLD, 35));
-                flagged = false;
+                deleteFlag();
             }
             else{
                 flag();

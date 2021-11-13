@@ -11,10 +11,13 @@ public class Board implements ActionListener {
         private int cellID = 0;
         private final int rowSize = 10;
         private final int colSize = 10;
+        private final int MINE = 10;
+        private int counter = MINE;
         JFrame frame = new JFrame("Minesweeper");
         JPanel gamePanel = new JPanel();
         JPanel buttonPanel = new JPanel();
         JButton reset = new JButton("RESET");
+        JLabel mineCounter = new JLabel();
 
         public Board(){
             reset.setPreferredSize(new Dimension(100,40));
@@ -24,7 +27,16 @@ public class Board implements ActionListener {
             reset.setFocusable(false);
             reset.addActionListener(this);
 
+            mineCounter.setText(""+MINE);
+            mineCounter.setForeground(Color.WHITE);
+            mineCounter.setBackground(Color.BLACK);
+            mineCounter.setPreferredSize(new Dimension(100,40));
+            mineCounter.setFont(new Font("Verdana",Font.BOLD,25));
+            mineCounter.setHorizontalAlignment(JLabel.CENTER);
+            mineCounter.setOpaque(true);
+
             buttonPanel.add(reset);
+            buttonPanel.add(mineCounter);
             gamePanel.add(addCells());
             frame.add(buttonPanel,BorderLayout.NORTH);
             frame.add(gamePanel,BorderLayout.CENTER);
@@ -53,7 +65,6 @@ public class Board implements ActionListener {
         }
 
         public void setMines(){
-            int MINE = 10;
             Random random = new Random();
             ArrayList<Integer> list = new ArrayList<>();
             for(int i = 0; i < MINE;){
@@ -149,6 +160,16 @@ public class Board implements ActionListener {
             return null;
         }
 
+        public void mineCountMinus(){
+            counter--;
+            mineCounter.setText(""+counter);
+        }
+
+        public void mineCountAdd(){
+            counter++;
+            mineCounter.setText(""+counter);
+        }
+
         public void isWin(){
             boolean win = true;
             for (int i = 0; i < rowSize; i++){
@@ -183,6 +204,8 @@ public class Board implements ActionListener {
                     cells[i][j].reset();
                 }
             }
+            counter = MINE;
+            mineCounter.setText(""+counter);
             setMines();
             setNeighbours();
         }
