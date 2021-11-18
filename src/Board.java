@@ -12,7 +12,8 @@ public class Board implements ActionListener {
         private final int rowSize = 10;
         private final int colSize = 10;
         private final int MINE = 10;
-        private int counter = MINE;
+        private int counter;
+        private int notMine;
         JFrame frame = new JFrame("Minesweeper");
         JPanel gamePanel = new JPanel();
         JPanel buttonPanel = new JPanel();
@@ -27,7 +28,6 @@ public class Board implements ActionListener {
             reset.setFocusable(false);
             reset.addActionListener(this);
 
-            mineCounter.setText(""+MINE);
             mineCounter.setForeground(Color.WHITE);
             mineCounter.setBackground(Color.BLACK);
             mineCounter.setPreferredSize(new Dimension(100,40));
@@ -41,8 +41,7 @@ public class Board implements ActionListener {
             frame.add(buttonPanel,BorderLayout.NORTH);
             frame.add(gamePanel,BorderLayout.CENTER);
 
-            setMines();
-            setNeighbours();
+            setUp();
 
             frame.pack();
             frame.setResizable(false);
@@ -170,19 +169,30 @@ public class Board implements ActionListener {
             mineCounter.setText(""+counter);
         }
 
+        public void notMineMinus(){
+            notMine--;
+        }
+
+        public void setUp(){
+            setMines();
+            setNeighbours();
+            counter = MINE;
+            notMine = (rowSize*colSize)-MINE;
+            mineCounter.setText(""+MINE);
+        }
+
         public void isWin(){
-            boolean win = true;
-            for (int i = 0; i < rowSize; i++){
-                for (int j = 0; j < colSize; j++){
-                    if (cells[i][j].getValue() != -1 && cells[i][j].isNotChecked()) {
-                        win = false;
-                        break;
+            if (notMine==0){
+                for (int i = 0; i < rowSize; i++){
+                    for (int j = 0; j < colSize; j++){
+                        if (cells[i][j].getButton()==Cell.pressedButton) {
+                            if (cells[i][j].getValue() != -1){
+                                JOptionPane.showMessageDialog(null,"You have won!",
+                                        "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
+                            }
+                        }
                     }
                 }
-            }
-            if (win){
-                JOptionPane.showMessageDialog(null,"You have won!",
-                        "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
             }
         }
 
@@ -204,10 +214,7 @@ public class Board implements ActionListener {
                     cells[i][j].reset();
                 }
             }
-            counter = MINE;
-            mineCounter.setText(""+counter);
-            setMines();
-            setNeighbours();
+            setUp();
         }
     }
 }

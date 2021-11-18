@@ -77,6 +77,7 @@ public class Cell extends MouseAdapter {
         //button.setEnabled(false);
         displayValue();
         notChecked = false;
+        board.notMineMinus();
         board.isWin();
         if(value == 0) {
             board.isWin();
@@ -137,7 +138,7 @@ public class Cell extends MouseAdapter {
         }
         else{
             pressedButton = (JButton) e.getSource();
-            if (!flagged){
+            if (!flagged && notChecked){
                 checkCell();
             }
         }
